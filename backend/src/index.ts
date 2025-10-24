@@ -10,18 +10,12 @@ const port = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-// Serve frontend static files
-app.use(express.static(path.join(__dirname, '../../dist')));
-
-
-
-// Get all jobs
+// API routes
 app.get('/api/jobs', async (req, res) => {
   const jobs = await db('jobs').select('*');
   res.json(jobs);
 });
 
-// Get a single job
 app.get('/api/jobs/:id', async (req, res) => {
   const { id } = req.params;
   const job = await db('jobs').where({ id }).first();
@@ -32,13 +26,11 @@ app.get('/api/jobs/:id', async (req, res) => {
   }
 });
 
-// Create a new job
 app.post('/api/jobs', async (req, res) => {
   const newJob = await db('jobs').insert(req.body).returning('*');
   res.status(201).json(newJob[0]);
 });
 
-// Update a job
 app.put('/api/jobs/:id', async (req, res) => {
   const { id } = req.params;
   const updatedJob = await db('jobs').where({ id }).update(req.body).returning('*');
@@ -49,7 +41,6 @@ app.put('/api/jobs/:id', async (req, res) => {
   }
 });
 
-// Delete a job
 app.delete('/api/jobs/:id', async (req, res) => {
   const { id } = req.params;
   const deletedCount = await db('jobs').where({ id }).del();
@@ -59,6 +50,9 @@ app.delete('/api/jobs/:id', async (req, res) => {
     res.status(404).send('Job not found');
   }
 });
+
+// Serve frontend static files
+app.use(express.static(path.join(__dirname, '../../dist')));
 
 // Catch-all to serve index.html for any other request
 app.get(/^\/(?!api).*/, (req, res) => {
