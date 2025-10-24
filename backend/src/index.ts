@@ -63,7 +63,7 @@ app.delete('/api/jobs/:id', async (req, res) => {
 });
 
 // Catch-all to serve index.html for any other request
-app.get('/*', (req, res) => {
+app.get(/^\/(?!api).*/, (req, res) => {
   res.sendFile(path.join(__dirname, '../../dist', 'index.html'));
 });
 
