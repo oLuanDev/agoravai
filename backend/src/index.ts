@@ -1,5 +1,5 @@
 
-import express from 'express';
+import express, { Request, Response } from 'express';
 import cors from 'cors';
 import path from 'path';
 import db from './db';
@@ -15,12 +15,12 @@ app.use(express.json());
 const apiRouter = express.Router();
 
 // All API endpoints will be relative to /api
-apiRouter.get('/jobs', async (req, res) => {
+apiRouter.get('/jobs', async (req: Request, res: Response) => {
   const jobs = await db('jobs').select('*');
   res.json(jobs);
 });
 
-apiRouter.get('/jobs/:id', async (req, res) => {
+apiRouter.get('/jobs/:id', async (req: Request, res: Response) => {
   const { id } = req.params;
   const job = await db('jobs').where({ id }).first();
   if (job) {
@@ -30,12 +30,12 @@ apiRouter.get('/jobs/:id', async (req, res) => {
   }
 });
 
-apiRouter.post('/jobs', async (req, res) => {
+apiRouter.post('/jobs', async (req: Request, res: Response) => {
   const newJob = await db('jobs').insert(req.body).returning('*');
   res.status(201).json(newJob[0]);
 });
 
-apiRouter.put('/jobs/:id', async (req, res) => {
+apiRouter.put('/jobs/:id', async (req: Request, res: Response) => {
   const { id } = req.params;
   const updatedJob = await db('jobs').where({ id }).update(req.body).returning('*');
   if (updatedJob.length > 0) {
@@ -45,7 +45,7 @@ apiRouter.put('/jobs/:id', async (req, res) => {
   }
 });
 
-apiRouter.delete('/jobs/:id', async (req, res) => {
+apiRouter.delete('/jobs/:id', async (req: Request, res: Response) => {
   const { id } = req.params;
   const deletedCount = await db('jobs').where({ id }).del();
   if (deletedCount > 0) {
@@ -64,7 +64,7 @@ app.use('/api', apiRouter);
 app.use(express.static(path.join(__dirname, '../../dist')));
 
 // Catch-all to serve index.html for any other non-api, non-file request
-app.get('*', (req, res) => {
+app.get('*', (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, '../../dist', 'index.html'));
 });
 
